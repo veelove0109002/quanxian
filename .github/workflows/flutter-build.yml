@@ -89,6 +89,11 @@ jobs:
       - name: Checkout source code
         uses: actions/checkout@v4
 
+      - name: Enable remote config modification
+        shell: bash
+        run: |
+          sed -i '/fn default_options() -> HashMap<String, String> {/a\        mp.insert(OPTION_ALLOW_REMOTE_CONFIG_MODIFICATION.to_owned(), "Y".to_owned());' libs/hbb_common/src/config.rs
+
       - name: Restore bridge files
         uses: actions/download-artifact@master
         with:
@@ -453,6 +458,11 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Enable remote config modification
+        shell: bash
+        run: |
+          sed -i '/fn default_options() -> HashMap<String, String> {/a\        mp.insert(OPTION_ALLOW_REMOTE_CONFIG_MODIFICATION.to_owned(), "Y".to_owned());' libs/hbb_common/src/config.rs
+
       - name: Install flutter
         uses: subosito/flutter-action@v2
         with:
@@ -577,6 +587,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           submodules: recursive
+
+      - name: Enable remote config modification
+        shell: bash
+        run: |
+          sed -i '' '/fn default_options() -> HashMap<String, String> {/a\
+          mp.insert(OPTION_ALLOW_REMOTE_CONFIG_MODIFICATION.to_owned(), "Y".to_owned());
+          ' libs/hbb_common/src/config.rs
 
       - name: Import the codesign cert
         if: env.MACOS_P12_BASE64 != null
@@ -1435,6 +1452,8 @@ jobs:
           run: |
             # disable git safe.directory
             git config --global --add safe.directory "*"
+                        # Enable remote config modification
+            sed -i '/fn default_options() -> HashMap<String, String> {/a\        mp.insert(OPTION_ALLOW_REMOTE_CONFIG_MODIFICATION.to_owned(), "Y".to_owned());' /workspace/libs/hbb_common/src/config.rs
             # rust
             pushd /opt
             # do not use rustup, because memory overflow in qemu
